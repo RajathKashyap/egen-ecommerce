@@ -1,0 +1,37 @@
+version : '3'
+services :
+    app :
+        image : 'docker-order-service:latest'
+        build :
+            context : .
+        container_name : egenapp
+        depends_on :
+            - db
+        environment :
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+            - SPRING_DATASOURCE_USERNAME=postgres
+            - SPRING_DATASOURCE_PASSWORD=root
+            - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    postgres :
+         image: postgres:9.5-alpine
+        environment:
+        POSTGRES_USER: postgres     
+        POSTGRES_PASSWORD: postgres 
+        POSTGRES_DB: postgres DB    
+        ports:
+            - 5432:5432   
+    
+    kafka-cluster:
+        image: landoop/fast-data-dev:latest
+        environment:
+            ADV_HOST: 127.0.0.1
+            RUNTESTS: 0      
+        ports:
+          - 2181:2181      
+          - 3030:3030      
+          - 8081-8083:8081-8083
+          - 9581-9585:9581-9585
+          - 9092:9092          
+
+
+

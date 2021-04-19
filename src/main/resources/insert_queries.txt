@@ -1,0 +1,33 @@
+INSERT INTO egen.address(
+	address_id, address_line1, address_line2, city, state, zip)
+	VALUES (1, '30 St.Germain street', 'Apt 6', 'Boston', 'MA', '02115'),
+(2, '55 Burbank street', 'Apt 22', 'Boston', 'MA', '02115'),
+(3, '1201 Dulles Ave', 'Apt 3103', 'Stafford', 'TX', '77477'), (4, '1341 Boylston St', null, 'Boston', 'MA', '02115');
+
+
+INSERT INTO egen.items(
+	item_id, item_name, item_price)
+	VALUES (1, 'Samsung Television', 1000), (2, 'Protein Bars', 15),
+(3, 'Nike Shoes', 85), (4, 'Iphone 12', 900), (5, 'Home gaming Chair', 189);
+
+
+INSERT INTO egen.shipping(
+	order_shipping_id, delivery_method, order_shipping_charges, order_shipping_address)
+	VALUES (101, 'Curb Side Pickup', 0, 4), (102, 'Home Delivery', 5, 2),
+(103, '3rd party delivery', 15, 3), (104, 'In store pickup', 0, 4);
+
+
+INSERT INTO egen.orders(
+	order_id, create_date, modify_date, order_customer_id, order_status, order_subtotal, order_tax, order_total, order_shipping_details)
+	VALUES (1, '2020-01-12', '2020-01-12', 1001, 'Delivered', 1000, 45, 1050, 102),
+(2, '2020-01-11', '2020-01-14', 1002, 'Ready for pickup', 985, 28, 1013, 101);
+
+INSERT INTO egen.order_item(
+	ordered_item_id, order_item_quantity, item_id, order_id)
+	VALUES (1, 1, 1, 1), (2,1,3,2), (3,1,4,2) ;
+
+
+INSERT INTO egen.payments(
+	order_payment_confirmation_number, card_number, cvv, expiry_month, expiry_year, name_on_card, order_payment_amount, order_payment_date, order_payment_method, order_id, order_billing_address)
+	VALUES (1, 0123123423453456, 123, 6, 2024, 'Darth Vader', 1050, '2020-01-12', 'Credit Card', 1, 1),
+(2, 1231234234, 1234, 12, 2022, 'Richie', 1013, '2020-01-15', 'Debit Card', 2, 3);
