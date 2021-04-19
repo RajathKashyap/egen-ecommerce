@@ -54,6 +54,7 @@ public class OrderService {
 	}
 
 	public Orders addOrder(NewOrder order) throws ItemNotFoundException {
+		logger.info("Preparing new order");
 		Orders newOrder = new Orders();
 		newOrder.setOrderStatus(OrderStatus.CREATED.getDesc());
 
@@ -67,6 +68,7 @@ public class OrderService {
 				Item itm = item.get();
 				items.add(new OrderItem(newOrder, itm, list.get(i).getOrderItemQuantity()));
 			} else {
+				logger.error("Invalid item sent in the order");
 				throw new ItemNotFoundException("Item not sold in the store");
 			}
 		}
@@ -76,10 +78,12 @@ public class OrderService {
 		newOrder.setOrderTax(order.getOrderTax());
 		newOrder.setOrderTotal(order.getOrderTotal());
 		newOrder.setPayment(populatePaymentDetails(order, newOrder));
+		logger.info("Saving new order");
 		return orderRepository.save(newOrder);
 	}
 
 	public Orders updateOrder(Orders update) throws OrderNotFoundException {
+		logger.info("Preparinf order for updation");
 		Orders orderToUpdate = getOrderById(update.getOrderId());
 		orderToUpdate.setOrderId(update.getOrderId());
 		Shipping s = update.getOrderShippingDetails();
@@ -104,6 +108,7 @@ public class OrderService {
 			p.setOrder(orderToUpdate);
 		}
 		if (paidAmount != orderToUpdate.getOrderTotal()) {
+			logger.info("Update Order : Wrong amount paid");
 			throw new IllegalArgumentException("Please enter the exact billed amount to continue");
 		}
 		orderToUpdate.setPayment(paymentList);
@@ -119,12 +124,11 @@ public class OrderService {
 		}
 	}
 
-	public Orders cancelOrder(Long orderId) throws OrderNotFoundException {
+	public Orders cancelOrder(Long orderId) throws OrderNotFoundException  {
 		Optional<Orders> order = orderRepository.findById(orderId);
 		if (order.isPresent()) {
 			Orders cancelOrder = order.get();
-			if (!(cancelOrder.getOrderStatus().equalsIgnoreCase(OrderStatus.CANCELLED.getDesc()))
-					&& !(cancelOrder.getOrderStatus().equalsIgnoreCase(OrderStatus.DELIVERED.getDesc()))) {
+			if (!(cancelOrder.getOrderStatus().equalsIgnoreCase(OrderStatus.CANCELLED.getDesc()))) {
 				cancelOrder.setOrderStatus(OrderStatus.CANCELLED.getDesc());
 				return orderRepository.save(cancelOrder);
 			} else {
@@ -151,6 +155,7 @@ public class OrderService {
 	}
 
 	private List<Payment> populatePaymentDetails(NewOrder order, Orders newOrder) {
+		logger.info("Populating order payment details");
 		List<Payment> payments = order.getPayments();
 		List<Payment> newPayments = new ArrayList<>();
 		double paidAmount = 0.0;
@@ -177,21 +182,22 @@ public class OrderService {
 		return newPayments;
 	}
 
-	public void addBulkOrder(NewOrder orders) {
+	public void addBulkOrder(NewOrder orders) throws ItemNotFoundException {
 		try {
 			addOrder(orders);
 		} catch (ItemNotFoundException e) {
-			e.printStackTrace();
+			throw new ItemNotFoundException(
+					"Invalid item passed to the order" + e.getStackTrace() + orders.getOrderItems().toString());
 		}
 	}
 
 	public void cancelBulkOrder(List<Long> orderIds) {
-		orderIds.stream().forEach((orderId) -> {
-			try {
-				cancelOrder(orderId);
-			} catch (OrderNotFoundException e) {
-				e.printStackTrace();
-			}
+		orderIds.stream().forEach(orderId -> {
+				try {
+					cancelOrder(orderId);
+				} catch (OrderNotFoundException e) {
+					logger.error(e.getMessage());
+				}
 		});
 	}
 }

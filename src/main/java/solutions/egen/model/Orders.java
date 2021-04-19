@@ -149,4 +149,13 @@ public class Orders {
 		this.modifyDate = modifyDate;
 	}
 
+	@Override
+	public String toString() {
+		return "Orders [orderId=" + orderId + ", orderStatus=" + orderStatus + ", orderCustomerId=" + orderCustomerId
+				+ ", orderSubtotal=" + orderSubtotal + ", orderTax=" + orderTax + ", orderTotal=" + orderTotal
+				+ ", orderShippingDetails=" + orderShippingDetails + ", orderItems=" + orderItems + ", payment="
+				+ payment + "]";
+	}
+
+	
 }

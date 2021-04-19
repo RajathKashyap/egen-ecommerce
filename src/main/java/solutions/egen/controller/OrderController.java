@@ -83,35 +83,39 @@ public class OrderController {
 	@ApiOperation(value = "Create orders in bulk")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully queued orders for processing"), })
 	public ResponseEntity<Object> createBulkOrders(@RequestBody List<NewOrder> orders) {
-		try{
+		try {
 			for (NewOrder order : orders) {
 				kafkaProducer.createOrders(order);
-		}
+			}
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Something went wrong, try again in sometime");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body("Orders successfully queued");
+		return ResponseEntity.status(HttpStatus.OK).body("Orders successfully queued for creation");
 	}
-	
+
 	@PutMapping("order/bulk")
 	@ApiOperation(value = "Update orders in bulk")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully queued orders for processing"), })
 	public ResponseEntity<Object> updateBulkOrders(@RequestBody List<Orders> orders) {
-		try{
+		try {
 			for (Orders order : orders) {
 				kafkaProducer.updateOrders(order);
-		}
+			}
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Something went wrong, try again in sometime");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body("Orders successfully queued");
+		return ResponseEntity.status(HttpStatus.OK).body("Orders successfully queued for updation");
 	}
 
 	@DeleteMapping("order/bulk/{ids}")
 	@ApiOperation(value = "Cancel orders in bulk")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully queued orders for cancellation"), })
-	public void cancelOrderBulk(@PathVariable List<Long> ids) {
-		kafkaProducer.cancelOrders(ids);
-
+	public ResponseEntity<String> cancelOrderBulk(@PathVariable List<Long> ids) {
+		try {
+			kafkaProducer.cancelOrders(ids);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Something went wrong, try again in sometime");
+		}
+		return ResponseEntity.status(HttpStatus.OK).body("Orders successfully queued for cancellation");
 	}
 }

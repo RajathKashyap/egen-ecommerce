@@ -443,7 +443,7 @@ Sample Request JSON
 
 Sample Response
 	
-	Orders successfully queued
+	Orders successfully queued for creation
 
 The processed requests statuses can be obtained through a different kafka topic or file dump. This feature is not implemented.
 	
@@ -574,7 +574,7 @@ Sample Request JSON
 ```
 Sample Response
 	
-	Orders successfully queued
+	Orders successfully queued for updation
 	
 ### NOTE:
 The Docker file provided is not tested due to network limitations of my system. It is a standard Docker file that can be used to spin up the required environment.
